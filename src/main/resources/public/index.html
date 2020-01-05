@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Task 1</title>
+    <script src="js/jsoneditor.js"></script>
+    <link rel='stylesheet' href='http://cdn.jsdelivr.net/foundation/5.0.2/css/foundation.min.css'>
+    <!-- Font Awesome icons (Bootstrap, Foundation, and jQueryUI also supported) -->
+    <link rel='stylesheet' href='http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
+    // Set the default CSS theme and icon library globally
+    JSONEditor.defaults.theme = 'foundation5';
+    JSONEditor.defaults.iconlib = 'fontawesome4';
+    </script>
+</head>
+<body>
+<h1>Task 1</h1>
+
+<div id='editor_holder'></div>
+<button id='submit'>Submit</button>
+
+<script>
+      // Initialize the editor with a JSON schema
+	   $(document).ready(function() {
+
+				$.ajax({
+    url: 'http://localhost:8080/task1/getASchema',
+
+    type: 'GET',
+
+	  dataType: 'json', // // <-------- use JSONP
+
+    success: function(data){
+	var editor = new JSONEditor(document.getElementById('editor_holder'),
+	 data
+	);
+	 document.getElementById('submit').addEventListener('click',function() {
+        // Get the value from the editor
+        console.log(editor.getValue());
+			$.ajax({
+			url: 'http://localhost:8080/task1/createA',
+			type: 'POST',
+			dataType: 'json', // // <-------- use JSONP
+			contentType:"application/json; charset=utf-8",
+			data: JSON.stringify(editor.getValue()),
+			headers:{"Access-Control-Allow-Origin":"*"},
+			success: function(data){
+				console.log(data)
+				alert('Success')},
+			error: function (jqXHR, text, errorThrown) {
+				console.log(jqXHR + " " + text + " " + errorThrown);
+				alert('Error:'+text)}
+			});
+
+      });
+	console.log(data)
+
+		}, error: function (jqXHR, text, errorThrown) {
+      console.log(jqXHR + " " + text + " " + errorThrown);
+  }
+		});
+				});
+    </script>
+</body>
+</html>
